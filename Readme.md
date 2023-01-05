@@ -1,4 +1,4 @@
-# Gimnàs amb PHP i MySQL
+# Gimnàs amb PHP i MySQL amb Programació orientada a Objectes
 
 ## Per Fernando Gonzàlez Serrano
 
