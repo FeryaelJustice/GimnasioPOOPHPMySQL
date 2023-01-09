@@ -17,4 +17,16 @@ class Reserva extends Connexio
         }
         $this->reserves = $all_reserves;
     }
+
+    function llistaReserves($dateFrom,$dateTo){
+
+    }
+
+    function afegirReserva($reserva){
+        
+    }
+
+    function reservesPerUsuari($user){
+        
+    }
 }
