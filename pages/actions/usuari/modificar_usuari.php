@@ -3,6 +3,11 @@ require __DIR__ . '../../../../database/db.php';
 
 require __DIR__ . '../../../../partials/header.php';
 
+// Redirect if it's not logged
+if (!isset($_SESSION['usuario'])) {
+    header('Location: /projects/tasku4dawes/index.php?page=login');
+}
+
 $id = null;
 $nom = "";
 $llinatges = "";
@@ -64,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>";
                     ?>
-                        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+                        <form class="form-group" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
                             <td>
                                 <input type="text" name="id" readonly value="<?= $row["idclient"] ?>">
                             </td>

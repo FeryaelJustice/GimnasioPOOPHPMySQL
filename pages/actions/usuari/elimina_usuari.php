@@ -2,6 +2,11 @@
 
 require __DIR__ . '../../../../database/db.php';
 
+// Redirect if it's not logged
+if (!isset($_SESSION['usuario'])) {
+    header('Location: /projects/tasku4dawes/index.php?page=login');
+}
+
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
@@ -35,5 +40,5 @@ if (isset($_GET['id'])) {
         $stmt->close();
     }
 
-    header('Location: /projects/tasku3dawes/index.php?page=usuaris');
+    header('Location: /projects/tasku4dawes/index.php?page=usuaris');
 }

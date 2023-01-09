@@ -1,3 +1,9 @@
+<?php
+// Redirect if it's not logged
+if (!isset($_SESSION['usuario'])) {
+    header('Location: /projects/tasku4dawes/index.php?page=login');
+}
+?>
 <div class="alert alert-info" role="alert">
     Tenir en compte que les fletxes van amb retràs, és a dir, que quan fas click a la fletxa de la dreta, no es veuen els canvis fins que no fas click a la fletxa de l'esquerra o dreta una altra vegada.
     Per exemple: esteim a 20/04, quan fas click a la dreta, la cookie s'estableix a 24/04, però no es veuen els canvis fins que dones click una altra vegada (en aquest moment la cookie estará a 28/04 si dones a la dreta, si es a l'esquerra estará a 20/04, i així)
@@ -15,7 +21,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
 
             /*
             if (empty($_GET['status'])) {
-                header('/projects/tasku3dawes/index.php?page=reserves&status=1');
+                header('/projects/tasku4dawes/index.php?page=reserves&status=1');
             }
             */
         } else if ($_POST["operation"] == "down") {
@@ -24,7 +30,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
 
             /*
             if (empty($_GET['status'])) {
-                header('/projects/tasku3dawes/index.php?page=reserves&status=1');
+                header('/projects/tasku4dawes/index.php?page=reserves&status=1');
             }
             */
         }
@@ -39,10 +45,10 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
         <div class="alert alert-primary" role="alert">
             <div class="row">
                 <div class="col-sm-2">
-                    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?page=reserves"; ?>">
+                    <form class="form-group" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?page=reserves"; ?>">
                         <input type="hidden" name="operation" value="down">
                         <button type="submit"><img src="./static/left.png" style="cursor:pointer"></button>
-                    </form>
+                    </formc>
                 </div>
                 <div class="col-sm-8">
                     <h2> Reserves setmana <?php
@@ -62,7 +68,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                                                                             echo ($dayTo . "/" . $monthTo) ?></h2>
                 </div>
                 <div class="col-sm-2">
-                    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?page=reserves"; ?>">
+                    <form class="form-group" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?page=reserves"; ?>">
                         <input type="hidden" name="operation" value="up">
                         <button type="submit"><img src="./static/right.png" style="cursor:pointer"></button>
                     </form>

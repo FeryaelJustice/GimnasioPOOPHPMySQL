@@ -1,3 +1,9 @@
+<?php
+// Redirect if it's not logged
+if (!isset($_SESSION['usuario'])) {
+    header('Location: /projects/tasku4dawes/index.php?page=login');
+}
+?>
 <div class="row">
     <div class="col-sm-8">
         <?php
@@ -23,9 +29,9 @@
                     <h2> Usuaris</h2>
                 </div>
                 <div class="col-sm-3">
-                    <form method="POST" action="./pages/actions/usuari/crea_usuari.php">
+                    <form class="form-group" method="POST" action="./pages/actions/usuari/crea_usuari.php">
                         <input type="hidden" name="id" value="id">
-                        <button type="submit" class="btn btn-primary"><img src="./static/add.png" width="32">Afegir Usuari</button>
+                        <button class="btn btn-primary" type="submit" class="btn btn-primary"><img src="./static/add.png" width="32">Afegir Usuari</button>
                     </form>
                 </div>
             </div>

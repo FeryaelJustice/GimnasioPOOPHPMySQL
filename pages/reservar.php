@@ -1,4 +1,9 @@
 <?php
+// Redirect if it's not logged
+if (!isset($_SESSION['usuario'])) {
+    header('Location: /projects/tasku4dawes/index.php?page=login');
+}
+
 // VALIDATION
 $diaErr = $horaErr = $tipusErr = $usuariErr = "";
 $dia = $hora = "";
@@ -110,7 +115,7 @@ function join_date_and_time($date, $time)
         <div class="alert alert-info" role="alert">
             Tenir en compte que no es pot reservar els dissabtes y diumenges.
         </div>
-        <form name="reserva" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <form class="form-group" name="reserva" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <h2> Reserva pista</h2>
             <p>
                 <label for="dia">Dia:</label>
@@ -166,7 +171,7 @@ function join_date_and_time($date, $time)
                 <span class="error">* <?php echo $usuariErr; ?></span>
             </p>
             <div style="text-align: center">
-                <input type="submit" value="Enviar" name="enviar" style="margin-right: 5px; width: 60px; height:30px; font-weight: bold">
+                <input class="btn btn-primary" type="submit" value="Enviar" name="enviar" style="margin-right: 5px; width: 60px; height:30px; font-weight: bold">
             </div>
         </form>
         <?php

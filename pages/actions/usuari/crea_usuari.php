@@ -2,10 +2,14 @@
 
 require __DIR__ . '../../../../partials/header.php';
 
+// Redirect if it's not logged
+if (!isset($_SESSION['usuario'])) {
+    header('Location: /projects/tasku4dawes/index.php?page=login');
+}
 ?>
 
 <br>
-<form name="newuser" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+<form class="form-group" name="newuser" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
     <caption><strong>CREAR USUARI</strong></caption>
     <br>
     <br>
@@ -50,6 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->close();
         }
 
-        header('Location: /projects/tasku3dawes/index.php?page=usuaris');
+        header('Location: /projects/tasku4dawes/index.php?page=usuaris');
     }
 }
