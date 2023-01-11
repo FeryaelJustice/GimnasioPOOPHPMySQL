@@ -13,7 +13,7 @@ class Reserva extends Connexio
         $resultat = $this->consulta($sql);
         $all_reserves = array();
         while ($fila = $resultat->fetch_assoc()) {
-            array_push($all_reserves, new ReservaSingleInstance($fila["data"], $fila["idpista"], $fila["idclient"]));
+            array_push($all_reserves, new ReservaSingleInstance($fila["data"], $fila["idpista"], $fila["idusuari"]));
         }
         $this->reserves = $all_reserves;
     }

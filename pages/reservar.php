@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($validForm && $validFormVacios) {
         // prepare and bind
         try {
-            $stmt = $conn->prepare("INSERT INTO reserves (data, idpista, idclient) VALUES (?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO reserves (data, idpista, idusuari) VALUES (?, ?, ?)");
             $stmt->bind_param("sss", $dataCompleta, $tipus, $usuari);
             $stmt->execute();
             $_SESSION['message'] = 'Reserva created successfully';
@@ -154,14 +154,14 @@ function join_date_and_time($date, $time)
                 <select class="form-select" id="usuari" name="usuari">
                     <option value="0">Seleccione:</option>
                     <?php
-                    $sql = "SELECT * FROM clients";
+                    $sql = "SELECT * FROM usuaris";
                     $result = $conn->query($sql);
                     if ($result->num_rows > 0) {
                         while ($valores = $result->fetch_assoc()) {
-                            if ($valores["idclient"] == $_POST["usuari"]) {
-                                echo '<option value="' . $valores["idclient"] . '" selected >' . $valores["nom"] . " " . $valores["llinatges"] . '</option>';
+                            if ($valores["idusuari"] == $_POST["usuari"]) {
+                                echo '<option value="' . $valores["idusuari"] . '" selected >' . $valores["nom"] . " " . $valores["llinatges"] . '</option>';
                             } else {
-                                echo '<option value="' . $valores["idclient"] . '">' . $valores["nom"] . " " . $valores["llinatges"] . '</option>';
+                                echo '<option value="' . $valores["idusuari"] . '">' . $valores["nom"] . " " . $valores["llinatges"] . '</option>';
                             }
                         }
                     }

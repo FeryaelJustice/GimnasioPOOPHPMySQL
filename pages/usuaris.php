@@ -39,7 +39,7 @@ if (!isset($_SESSION['usuario'])) {
 
         <div class="table-responsive">
             <?php
-            $sql = "SELECT idclient, nom, llinatges, telefon FROM clients";
+            $sql = "SELECT idusuari, nom, llinatges, telefon, username, password FROM usuaris";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
@@ -50,16 +50,18 @@ if (!isset($_SESSION['usuario'])) {
                         <th>nom</th>
                         <th>llinatges</th>
                         <th>telefon</th>
+                        <th>nom de usuari</th>
+                        <th>contrasenya (SHA2)</th>
                         <th></th>
                     </tr>
                     <?php
                     // output data of each row
                     while ($row = $result->fetch_assoc()) {
-                        echo "<tr><td>" . $row["idclient"] . "</td><td>" . $row["nom"] . "</td><td>" . $row["llinatges"] . "</td><td>" . $row["telefon"] . "</td>";
+                        echo "<tr><td>" . $row["idusuari"] . "</td><td>" . $row["nom"] . "</td><td>" . $row["llinatges"] . "</td><td>" . $row["telefon"] . "</td><td>" . $row["username"] . "</td><td>" . $row["password"] . "</td>";
                     ?>
                         <td>
-                            <a href="./pages/actions/usuari/modificar_usuari.php?id=<?php echo $row["idclient"] ?>"><img src="./static/pencil.png" width="32"></a>
-                            <a href="./pages/actions/usuari/elimina_usuari.php?id=<?php echo $row["idclient"] ?>"><img src="./static/remove.png" width="32"></a>
+                            <a href="./pages/actions/usuari/modificar_usuari.php?id=<?php echo $row["idusuari"] ?>"><img src="./static/pencil.png" width="32"></a>
+                            <a href="./pages/actions/usuari/elimina_usuari.php?id=<?php echo $row["idusuari"] ?>"><img src="./static/remove.png" width="32"></a>
                         </td>
                         </tr>";
                     <?php

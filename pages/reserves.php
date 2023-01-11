@@ -111,7 +111,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                         $diesSetmana = array("1", "2", "3", "4", "5");
                         // $horesDisponibles = ["15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
                         // $index = 0; // per el while i anar posant els dies de la setmana
-                        // echo "<tr><td>" . $horesDisponibles[$index] . "</td><td>" . $row["data"] . "</td><td>" . $row["idpista"] . "</td><td>" . $row["idclient"] . "</td></tr>";
+                        // echo "<tr><td>" . $horesDisponibles[$index] . "</td><td>" . $row["data"] . "</td><td>" . $row["idpista"] . "</td><td>" . $row["idusuari"] . "</td></tr>";
 
                         // 15:00
                         echo "<tr>";
@@ -127,7 +127,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                                         if ($resultField->num_rows > 0) {
                                             while ($rowField = $resultField->fetch_assoc()) {
                                                 // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, clients.nom, clients.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN clients ON clients.idclient = '$rowField[idclient]' WHERE reserves.data = '$rowField[data]'";
+                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
                                                 $resultDatosReserva = $conn->query($sqlDatosReserva);
                                                 if ($resultDatosReserva->num_rows > 0) {
                                                     while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
@@ -161,7 +161,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                                         if ($resultField->num_rows > 0) {
                                             while ($rowField = $resultField->fetch_assoc()) {
                                                 // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, clients.nom, clients.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN clients ON clients.idclient = '$rowField[idclient]' WHERE reserves.data = '$rowField[data]'";
+                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
                                                 $resultDatosReserva = $conn->query($sqlDatosReserva);
                                                 if ($resultDatosReserva->num_rows > 0) {
                                                     while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
@@ -196,7 +196,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                                         if ($resultField->num_rows > 0) {
                                             while ($rowField = $resultField->fetch_assoc()) {
                                                 // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, clients.nom, clients.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN clients ON clients.idclient = '$rowField[idclient]' WHERE reserves.data = '$rowField[data]'";
+                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
                                                 $resultDatosReserva = $conn->query($sqlDatosReserva);
                                                 if ($resultDatosReserva->num_rows > 0) {
                                                     while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
@@ -231,7 +231,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                                         if ($resultField->num_rows > 0) {
                                             while ($rowField = $resultField->fetch_assoc()) {
                                                 // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, clients.nom, clients.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN clients ON clients.idclient = '$rowField[idclient]' WHERE reserves.data = '$rowField[data]'";
+                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
                                                 $resultDatosReserva = $conn->query($sqlDatosReserva);
                                                 if ($resultDatosReserva->num_rows > 0) {
                                                     while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
@@ -266,7 +266,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                                         if ($resultField->num_rows > 0) {
                                             while ($rowField = $resultField->fetch_assoc()) {
                                                 // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, clients.nom, clients.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN clients ON clients.idclient = '$rowField[idclient]' WHERE reserves.data = '$rowField[data]'";
+                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
                                                 $resultDatosReserva = $conn->query($sqlDatosReserva);
                                                 if ($resultDatosReserva->num_rows > 0) {
                                                     while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
@@ -301,7 +301,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                                         if ($resultField->num_rows > 0) {
                                             while ($rowField = $resultField->fetch_assoc()) {
                                                 // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, clients.nom, clients.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN clients ON clients.idclient = '$rowField[idclient]' WHERE reserves.data = '$rowField[data]'";
+                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
                                                 $resultDatosReserva = $conn->query($sqlDatosReserva);
                                                 if ($resultDatosReserva->num_rows > 0) {
                                                     while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {

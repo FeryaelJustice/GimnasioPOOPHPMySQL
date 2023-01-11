@@ -25,6 +25,14 @@ if (!isset($_SESSION['usuario'])) {
     <input type="number" name="phone" id="phone">
     <br>
     <br>
+    <label for="username">Nom de usuari:</label>
+    <input type="text" name="username" id="username">
+    <br>
+    <br>
+    <label for="password">Contrasenya:</label>
+    <input type="password" name="password" id="password">
+    <br>
+    <br>
     <input type="hidden" name="id" value="">
     <input type="submit" value="Enviar">
     <input type="reset" value="Reset">
@@ -40,8 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         require __DIR__ . '../../../../database/db.php';
 
         try {
-            $stmt = $conn->prepare("INSERT INTO clients (nom, llinatges, telefon) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $_POST["name"], $_POST["surname"], $_POST["phone"]);
+            $stmt = $conn->prepare("INSERT INTO usuaris (nom, llinatges, telefon, username, password) VALUES (?, ?, ?, ?, SHA2(?,256))");
+            $stmt->bind_param("sssss", $_POST["name"], $_POST["surname"], $_POST["phone"], $_POST["username"], $_POST["password"]);
             $stmt->execute();
             $_SESSION['message'] = 'User created successfully';
             $_SESSION['message_type'] = 'success';

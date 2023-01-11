@@ -1,48 +1,29 @@
--- phpMyAdmin SQL Dump
--- version 4.9.0.1
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 23-10-2021 a las 09:53:31
--- Versión del servidor: 10.4.6-MariaDB-log
--- Versión de PHP: 7.3.9
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+DROP DATABASE if EXISTS gimnaspoo;
+CREATE DATABASE gimnaspoo;
+USE gimnaspoo;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de datos: `gimnas`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `clients`
---
-
-CREATE TABLE `clients` (
-  `idclient` int(11) NOT NULL,
+CREATE TABLE `usuaris` (
+  `idusuari` int(11) NOT NULL,
   `nom` varchar(30) NOT NULL,
   `llinatges` varchar(50) NOT NULL,
-  `telefon` varchar(12) NOT NULL
+  `telefon` varchar(12) NOT NULL,
+  `username` varchar(30) NOT NULL,
+  `password` VARCHAR(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Volcado de datos para la tabla `clients`
+-- Volcado de datos para la tabla `usuaris`
 --
 
-INSERT INTO `clients` (`idclient`, `nom`, `llinatges`, `telefon`) VALUES
-(1, 'Miquel', 'Mir', '632452314'),
-(2, 'Joana', 'Pons', '656998877'),
-(3, 'Laura ', 'Gonzalez', '696568423');
+INSERT INTO `usuaris` (`idusuari`, `nom`, `llinatges`, `telefon`, `username`, `password`) VALUES
+(1, 'Miquel', 'Mir', '632452314', 'miquelet', '81dc9bdb52d04dc20036dbd8313ed055'),
+(2, 'Joana', 'Pons', '656998877', 'joana22', '81dc9bdb52d04dc20036dbd8313ed055'),
+(3, 'Laura ', 'Gonzalez', '696568423', 'laureta', '81dc9bdb52d04dc20036dbd8313ed055');
 
 -- --------------------------------------------------------
 
@@ -73,14 +54,14 @@ INSERT INTO `pistes` (`idpista`, `tipo`, `preu`) VALUES
 CREATE TABLE `reserves` (
   `data` datetime NOT NULL,
   `idpista` int(11) NOT NULL,
-  `idclient` int(11) NOT NULL
+  `idusuari` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `reserves`
 --
 
-INSERT INTO `reserves` (`data`, `idpista`, `idclient`) VALUES
+INSERT INTO `reserves` (`data`, `idpista`, `idusuari`) VALUES
 ('2021-11-04 16:00:00', 2, 1),
 ('2021-11-22 15:00:00', 1, 1),
 ('2021-10-20 18:00:00', 2, 2),
@@ -92,10 +73,10 @@ INSERT INTO `reserves` (`data`, `idpista`, `idclient`) VALUES
 --
 
 --
--- Indices de la tabla `clients`
+-- Indices de la tabla `usuaris`
 --
-ALTER TABLE `clients`
-  ADD PRIMARY KEY (`idclient`);
+ALTER TABLE `usuaris`
+  ADD PRIMARY KEY (`idusuari`);
 
 --
 -- Indices de la tabla `pistes`
@@ -108,7 +89,7 @@ ALTER TABLE `pistes`
 --
 ALTER TABLE `reserves`
   ADD PRIMARY KEY (`data`,`idpista`),
-  ADD KEY `idclient` (`idclient`),
+  ADD KEY `idusuari` (`idusuari`),
   ADD KEY `idpista` (`idpista`);
 
 --
@@ -116,10 +97,10 @@ ALTER TABLE `reserves`
 --
 
 --
--- AUTO_INCREMENT de la tabla `clients`
+-- AUTO_INCREMENT de la tabla `usuaris`
 --
-ALTER TABLE `clients`
-  MODIFY `idclient` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+ALTER TABLE `usuaris`
+  MODIFY `idusuari` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `pistes`
@@ -135,10 +116,6 @@ ALTER TABLE `pistes`
 -- Filtros para la tabla `reserves`
 --
 ALTER TABLE `reserves`
-  ADD CONSTRAINT `reserves_ibfk_1` FOREIGN KEY (`idclient`) REFERENCES `clients` (`idclient`),
+  ADD CONSTRAINT `reserves_ibfk_1` FOREIGN KEY (`idusuari`) REFERENCES `usuaris` (`idusuari`),
   ADD CONSTRAINT `reserves_ibfk_2` FOREIGN KEY (`idpista`) REFERENCES `pistes` (`idpista`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

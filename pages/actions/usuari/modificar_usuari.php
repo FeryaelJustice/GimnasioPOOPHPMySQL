@@ -9,8 +9,7 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 $id = null;
-$nom = "";
-$llinatges = "";
+$nom = $llinatges = $username = $password = "";
 $telefon = 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -18,7 +17,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nom = $_POST["name"];
     $llinatges = $_POST["surname"];
     $telefon = $_POST["phone"];
-    $sqlUpdate = "UPDATE clients SET nom='$nom', llinatges='$llinatges', telefon='$telefon' WHERE idclient = $id";
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+    $sqlUpdate = "UPDATE usuaris SET nom='$nom', llinatges='$llinatges', telefon='$telefon', username='$telefon', password=SHA2('$password',256) WHERE idusuari = $id";
     $result = $conn->query($sqlUpdate);
     if ($result) {
         $_SESSION['message'] = 'User edited successfully';
@@ -52,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <div class="table-responsive">
             <?php
-            $sql = "SELECT idclient, nom, llinatges, telefon FROM clients";
+            $sql = "SELECT idusuari, nom, llinatges, telefon, username, password FROM usuaris";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
@@ -63,6 +64,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <th>nom</th>
                         <th>llinatges</th>
                         <th>telefon</th>
+                        <th>nom de usuari</th>
+                        <th>contrasenya (SHA2)</th>
                         <th></th>
                     </tr>
                     <?php
@@ -71,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?>
                         <form class="form-group" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
                             <td>
-                                <input type="text" name="id" readonly value="<?= $row["idclient"] ?>">
+                                <input type="text" name="id" readonly value="<?= $row["idusuari"] ?>">
                             </td>
                             <td>
                                 <input type="text" name="name" id="name" value="<?= $row["nom"] ?>">
@@ -81,6 +84,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </td>
                             <td>
                                 <input type="text" name="phone" id="phone" value="<?= $row["telefon"] ?>">
+                            </td>
+                            <td>
+                                <input type="text" name="username" id="username" value="<?= $row["username"] ?>">
+                            </td>
+                            <td>
+                                <input type="password" name="password" id="password" value="<?= $row["password"] ?>">
                             </td>
                             <td>
                                 <input type="image" src="../../../static/check.png" alt="Submit" width="32">
