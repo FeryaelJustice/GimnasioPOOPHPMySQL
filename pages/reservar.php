@@ -149,27 +149,11 @@ function join_date_and_time($date, $time)
                 <span class="error">* <?php echo $tipusErr; ?></span>
             </p>
 
-            <h2> Usuari</h2>
-            <p>
-                <select class="form-select" id="usuari" name="usuari">
-                    <option value="0">Seleccione:</option>
-                    <?php
-                    $sql = "SELECT * FROM usuaris";
-                    $result = $conn->query($sql);
-                    if ($result->num_rows > 0) {
-                        while ($valores = $result->fetch_assoc()) {
-                            if ($valores["idusuari"] == $_POST["usuari"]) {
-                                echo '<option value="' . $valores["idusuari"] . '" selected >' . $valores["nom"] . " " . $valores["llinatges"] . '</option>';
-                            } else {
-                                echo '<option value="' . $valores["idusuari"] . '">' . $valores["nom"] . " " . $valores["llinatges"] . '</option>';
-                            }
-                        }
-                    }
-                    $result->free();
-                    ?>
-                </select>
-                <span class="error">* <?php echo $usuariErr; ?></span>
-            </p>
+            <input type="hidden" name="usuari" value="<?php
+                                                        $user = explode("/", $_SESSION['usuario']);
+                                                        echo $user[0];
+                                                        ?>">
+
             <div style="text-align: center">
                 <input class="btn btn-primary" type="submit" value="Enviar" name="enviar" style="margin-right: 5px; width: 60px; height:30px; font-weight: bold">
             </div>

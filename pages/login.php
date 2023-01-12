@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // echo $usuari -> nom . " / " . $usuari -> llinatges;
             // $_POST['nom'] . " / " . $_POST['llinatges'] . " / " . $_POST['telefon'] . " / " . $_POST['username'] . " / " . $_POST['password'];
             // serialize and unserialize to store objects in sessions (recommended way)
-            $_SESSION['usuario'] = $usuari -> nom . " / " . $usuari -> llinatges;
+            $_SESSION['usuario'] = $usuari -> id . " / " . $usuari -> nom . " / " . $usuari -> llinatges;
             $_SESSION['message'] = 'User logged successfully';
             $_SESSION['message_type'] = 'success';
             echo "User logged";

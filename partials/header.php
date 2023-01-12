@@ -67,8 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <a class="nav-link" style="color:white;">
                             <?php
                                 $user = explode("/",$_SESSION['usuario']);
-                                echo "Nom: $user[0]";
-                                echo "/ Llinatges: $user[1]";
+                                echo "Nom: $user[1]";
+                                echo "/ Llinatges: $user[2]";
                             ?>
                         </a>
                     <?php
