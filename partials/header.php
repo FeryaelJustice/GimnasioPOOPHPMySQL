@@ -18,6 +18,8 @@ $page = (isset($_GET['page'])) ? $_GET['page'] : 'login';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["signout"])) {
         unset($_SESSION['usuario']);
+        $_SESSION['message'] = 'User signed out successfully';
+        $_SESSION['message_type'] = 'success';
         header('Location: /projects/tasku4dawes/index.php?page=login');
     }
 }
@@ -59,9 +61,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // <a class="nav-link" href="/login.php?page=login">Sign out</a>
                     if (isset($_SESSION['usuario'])) {
                     ?>
-                        <form class=""form-inline my-2 my-lg-0"" name="signOut" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                        <form class="" form-inline my-2 my-lg-0"" name="signOut" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                             <input class="form-control mr-sm-2" type="submit" value="Cerrar sesión" name="signout"></input>
                         </form>
+                        <a class="nav-link" style="color:white;">
+                            <?php
+                                $user = explode("/",$_SESSION['usuario']);
+                                echo "Nom: $user[0]";
+                                echo "/ Llinatges: $user[1]";
+                            ?>
+                        </a>
                     <?php
                     }
                     ?>

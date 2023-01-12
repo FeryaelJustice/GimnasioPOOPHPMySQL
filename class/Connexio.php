@@ -6,7 +6,7 @@ class Connexio
     private $db;
     private $user;
     private $password;
-    private $dsn; // Nombre de origen de datos
+    // private $dsn; // Nombre de origen de datos
     protected $connection;
 
     // Functions
@@ -32,9 +32,14 @@ class Connexio
         return $connection;
     }
 
-    public function consulta($sql)
+    public function query($sql)
     {
-        $result =  $this->connection->query($sql)  or die("<h4>Operació Incorrecta. Consulta:$sql</h4>");
+        $result =  $this->connection->query($sql) or die("<h4>Operació incorrecta. Query:$sql</h4>");
+        return $result;
+    }
+
+    public function preparedInsert($insert){
+        $result = $this->connection->prepare($insert) or die("<h4>Operació incorrecta. Prepared insert:$insert</h4>");
         return $result;
     }
 }

@@ -1,80 +1,112 @@
 <?php
+require_once(__DIR__ . '/Connexio.php');
 class Usuari extends Connexio
 {
     // Properties
-    public $user;
-    private $valid = false;
+    public $id;
+    public $nom;
+    public $llinatges;
+    public $telefon;
+    public $username;
+    public $password;
 
     // Methods
     function __construct()
     {
         parent::__construct();
+        $this -> id = "";
+        $this -> nom = "";
+        $this -> llinatges = "";
+        $this -> telefon = "";
+        $this -> username = "";
+        $this -> password = "";
     }
 
-    public function getValid()
+    public function createUsuari($name, $surnames, $phone, $username, $pwd)
     {
-        return $this->valid;
-    }
-
-    public function createUsuari($user, $pwd, $email)
-    {
-        if (!($this->checkUser($user, $pwd))) {
-
+        if (!($this->checkUser($username, $pwd))) {
+            echo"user not exists";
             try {
-                $stmt = $this->connection->prepare("INSERT INTO usuaris (user, password, email) VALUES (?, SHA2(?), ?)");
-                $stmt->bind_param("sss", $user, $pwd, $email);
+                $insert = "INSERT INTO usuaris (nom, llinatges, telefon, username, password) VALUES (?, ?, ?, ?, SHA2(?,256))";
+                $stmt = $this->preparedInsert($insert);
+                $stmt->bind_param("sssss", $name, $surnames,  $phone, $username, $pwd);
                 $stmt->execute();
+                return true;
             } catch (Exception $e) {
-                echo "Create user transaction failed";
-                die();
+                return false;
             } finally {
                 $stmt->close();
             }
+        } else {
+            echo "user exists";
+            return false;
+        }
+    }
 
-            /*
-            $consulta = 'insert into usuaris values("' . $user . '",SHA2("' . $pwd . '",256),"' . $email . '","user");';
+    public function updateUsuari($id, $nom, $llinatges, $telefon, $username, $pwd)
+    {
+        // Asegurarnos que no hay ningun dato vacio
+        if ($id != '' && $nom != '' && $llinatges != '' && $telefon != '' && $username != '' &&  $pwd != '') {
+            $consulta = "UPDATE usuaris SET nom='$nom', llinatges='$llinatges', telefon='$telefon', username='$telefon', password=SHA2('$pwd',256) WHERE idusuari = $id";
             try {
-                $this->connection->query($consulta);
-            } catch (PDOException $ex) {
-                die("Error al agregar usuario: " . $ex->getMessage());
+                $this->query($consulta);
+                return true;
+            } catch (Exception $ex) {
+                return false;
             }
-            */
         } else {
             return false;
         }
     }
 
-    public function updateUsuari($user, $pwd)
+    public function deleteUsuari($id)
     {
-        $consulta = 'update usuaris set password=sha2("' . $pwd . '",256) where usuari="' . $user . '";';
-        try {
-            $this->connection->query($consulta);
-        } catch (Exception $ex) {
-            die("Error al modificar password: " . $ex->getMessage());
+        $reservaUtil = new Reserva();
+        // Si no tiene reservas
+        if (count($reservaUtil->reservesPerUsuari($id)) <= 0) {
+            $consulta = "delete from usuaris where idusuari='$id'";
+            try {
+                $this->query($consulta);
+                return true;
+            } catch (Exception $ex) {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 
-    public function deleteUsuari($email)
+    public function getUsuari($username, $password)
     {
-        $consulta = 'delete from usuaris where email="' . $email . '";';
-        try {
-            $this->connection->query($consulta);
-        } catch (Exception $ex) {
-            die("Error al modificar password: " . $ex->getMessage());
-        }
-    }
-
-    private function checkUser($user, $pwd)
-    {
-        $consulta = 'select count(*) as total from usuaris where usuari="' . $user . '" and password=sha2("' . $pwd . '",256);';
-        $data = $this->connection->query($consulta)->fetch_assoc();
-        if ($data['total'] > 0) {
-            $this->user = $user;
-            $this->valid = true;
+        $consulta = "select * from usuaris where username='$username' and password=SHA2('$password',256)";
+        $data = $this->query($consulta);
+        if ($data->num_rows > 0) {
+            while ($rowData = $data->fetch_assoc()) {
+                $this->id = $rowData["idusuari"];
+                $this->nom = $rowData["nom"];
+                $this->llinatges = $rowData["llinatges"];
+                $this->telefon = $rowData["telefon"];
+                $this->username = $rowData["username"];
+                $this->password = $rowData["password"];
+            }
             return true;
         } else {
-            $this->valid = false;
             return false;
         }
+    }
+
+    public function checkUser($username, $password)
+    {
+        $consulta = "select count(*) as total from usuaris where username='$username' and password=SHA2('$password',256)";
+        $data = $this->query($consulta)->fetch_assoc();
+        if ($data['total'] > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function __toString() {
+        return "$this->nom $this->llinatges";
     }
 }

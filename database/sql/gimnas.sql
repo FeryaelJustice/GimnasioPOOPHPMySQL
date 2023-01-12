@@ -17,13 +17,13 @@ CREATE TABLE `usuaris` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Volcado de datos para la tabla `usuaris`
+-- Volcado de datos para la tabla `usuaris` (passwords: 1234)
 --
 
 INSERT INTO `usuaris` (`idusuari`, `nom`, `llinatges`, `telefon`, `username`, `password`) VALUES
-(1, 'Miquel', 'Mir', '632452314', 'miquelet', '81dc9bdb52d04dc20036dbd8313ed055'),
-(2, 'Joana', 'Pons', '656998877', 'joana22', '81dc9bdb52d04dc20036dbd8313ed055'),
-(3, 'Laura ', 'Gonzalez', '696568423', 'laureta', '81dc9bdb52d04dc20036dbd8313ed055');
+(1, 'Miquel', 'Mir', '632452314', 'miquelet', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'),
+(2, 'Joana', 'Pons', '656998877', 'joana22', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'),
+(3, 'Laura ', 'Gonzalez', '696568423', 'laureta', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4');
 
 -- --------------------------------------------------------
 
@@ -118,4 +118,11 @@ ALTER TABLE `pistes`
 ALTER TABLE `reserves`
   ADD CONSTRAINT `reserves_ibfk_1` FOREIGN KEY (`idusuari`) REFERENCES `usuaris` (`idusuari`),
   ADD CONSTRAINT `reserves_ibfk_2` FOREIGN KEY (`idpista`) REFERENCES `pistes` (`idpista`);
+
+--
+-- Para el completo tamaño de SHA2(256)
+--
+ALTER TABLE `usuaris`
+  MODIFY `password` VARCHAR(64);
+
 COMMIT;
