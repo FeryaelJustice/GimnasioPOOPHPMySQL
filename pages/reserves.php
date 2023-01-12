@@ -3,6 +3,23 @@
 if (!isset($_SESSION['usuario'])) {
     header('Location: /projects/tasku4dawes/index.php?page=login');
 }
+// Mensajes de la web
+if (isset($_SESSION['message']) && $_SESSION['message'] != "") {
+    if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "success") {
+?>
+        <div class="alert alert-success" role="alert">
+            <?= $_SESSION['message'] ?>
+        </div>
+    <?php
+    } else if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "error") {
+    ?>
+        <div class="alert alert-danger" role="alert">
+            <?= $_SESSION['message'] ?>
+        </div>
+<?php
+        $_SESSION['message'] = "";
+    }
+}
 ?>
 <div class="alert alert-info" role="alert">
     Tenir en compte que les fletxes van amb retràs, és a dir, que quan fas click a la fletxa de la dreta, no es veuen els canvis fins que no fas click a la fletxa de l'esquerra o dreta una altra vegada.
@@ -48,7 +65,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                     <form class="form-group" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?page=reserves"; ?>">
                         <input type="hidden" name="operation" value="down">
                         <button type="submit"><img src="./static/left.png" style="cursor:pointer"></button>
-                    </formc>
+                        </formc>
                 </div>
                 <div class="col-sm-8">
                     <h2> Reserves setmana <?php

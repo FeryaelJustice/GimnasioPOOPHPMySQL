@@ -56,7 +56,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <!-- <a class="nav-link disabled">Home</a> -->
                     <a class="nav-link<?php echo ($page == "reservar" ? " active\" aria-current=\"page" : "") ?>" href="/projects/tasku4dawes/index.php?page=reservar">Reservar pista</a>
                     <a class="nav-link<?php echo ($page == "reserves" ? " active\" aria-current=\"page" : "") ?>" href="/projects/tasku4dawes/index.php?page=reserves">Veure reserves</a>
-                    <a class="nav-link<?php echo ($page == "usuaris" ? " active\"aria-current=\"page" : "") ?>" href="/projects/tasku4dawes/index.php?page=usuaris">Usuaris</a>
                     <?php
                     // <a class="nav-link" href="/login.php?page=login">Sign out</a>
                     if (isset($_SESSION['usuario'])) {

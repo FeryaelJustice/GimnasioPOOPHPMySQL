@@ -18,6 +18,7 @@ if (isset($_SESSION['message']) && $_SESSION['message'] != "") {
             <?= $_SESSION['message'] ?>
         </div>
 <?php
+        $_SESSION['message'] = "";
     }
 }
 
@@ -42,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['message_type'] = 'error';
                 echo "User creation failed";
             }
-        }else{
+        } else {
             $_SESSION['message'] = 'Las contraseñas no coinciden';
             $_SESSION['message_type'] = 'error';
             echo "Las contraseñas no coinciden";

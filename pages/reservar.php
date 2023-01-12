@@ -96,6 +96,7 @@ function join_date_and_time($date, $time)
 <div class="row">
     <div class="col-sm-4">
         <?php
+        // Mensajes de la web
         if (isset($_SESSION['message']) && $_SESSION['message'] != "") {
             if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "success") {
         ?>
@@ -109,6 +110,7 @@ function join_date_and_time($date, $time)
                     <?= $_SESSION['message'] ?>
                 </div>
         <?php
+                $_SESSION['message'] = "";
             }
         }
         ?>
