@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <span class="error">* <?php echo $diaErr; ?></span>
                 <br /><br />
                 <label for="hora">Hora:</label>
-                <input type="time" id="hora" name="hora" min="15:00" max="20:59" value="<?php echo $hora; ?>">
+                <input type="time" id="hora" name="hora" min="16:00" max="20:59" value="<?php echo $hora; ?>">
                 <span class="error">* <?php echo $horaErr; ?></span>
             </p>
 

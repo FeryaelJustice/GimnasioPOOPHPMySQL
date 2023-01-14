@@ -21,6 +21,15 @@ foreach ($pistes as $key => $value){
 }
 */
 
+// Get reservas del usuari
+$reservasUsuario = $res->reservesPerUsuari($id_usuario);
+// Testing (COMMENT)
+/*
+foreach ($reservasUsuario as $reserva){
+    echo $reserva->date . "/";
+}
+*/
+
 // Calculate the date of Monday for the current week
 $monday = date('Y-m-d', strtotime('monday this week'));
 // Calculate the date of Friday for the current week
@@ -103,7 +112,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -126,7 +135,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -149,7 +158,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -172,7 +181,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -195,7 +204,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -222,7 +231,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -245,7 +254,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -268,7 +277,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -291,7 +300,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -314,7 +323,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -341,7 +350,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -364,7 +373,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -387,7 +396,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -410,7 +419,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -433,7 +442,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -460,7 +469,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -483,7 +492,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -506,7 +515,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -529,7 +538,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -552,7 +561,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -579,7 +588,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -602,7 +611,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -625,7 +634,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -648,7 +657,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
@@ -671,7 +680,7 @@ foreach ($bookingsByDay as $booki) {
                                             }
                                         }
                                         if ($id_usuario == $booking->id_client) {
-                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                            echo "<strong style='color:red'>" . $nomPista . "(TEVA)</strong><br>";
                                         } else {
                                             echo "<p>" . $nomPista . "</p><br>";
                                         }
