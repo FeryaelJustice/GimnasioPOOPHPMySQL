@@ -3,62 +3,57 @@
 if (!isset($_SESSION['usuario'])) {
     header('Location: /projects/tasku4dawes/index.php?page=login');
 }
-// Mensajes de la web
-if (isset($_SESSION['message']) && $_SESSION['message'] != "") {
-    if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "success") {
-?>
-        <div class="alert alert-success" role="alert">
-            <?= $_SESSION['message'] ?>
-        </div>
-    <?php
-    } else if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "error") {
-    ?>
-        <div class="alert alert-danger" role="alert">
-            <?= $_SESSION['message'] ?>
-        </div>
-<?php
-        $_SESSION['message'] = "";
+
+require_once(__DIR__ . '../../class/Reserva.php');
+require_once(__DIR__ . '../../class/ReservaSingleInstance.php');
+require_once(__DIR__ . '../../class/Pista.php');
+
+$res = new Reserva();
+$pista = new Pista();
+$id_usuario = explode("/", $_SESSION['usuario'])[0];
+
+// Get pistaID -> Nom pista en un array
+$pistes = $pista->getPistes();
+// Testing (COMMENT)
+/*
+foreach ($pistes as $key => $value){
+    echo "/$key" . "-" . "$value";
+}
+*/
+
+// Calculate the date of Monday for the current week
+$monday = date('Y-m-d', strtotime('monday this week'));
+// Calculate the date of Friday for the current week
+$friday = date('Y-m-d', strtotime('friday this week'));
+
+// Retrieve the bookings for this week
+$bookings = $res->llistaReserves($monday, $friday);
+
+// Create an array to store the bookings for each day
+$bookingsByDay = array();
+
+// Iterate through each booking and store it in the appropriate day in the array
+foreach ($bookings as $booking) {
+    if (!isset($bookingsByDay[date('Y-m-d', strtotime($booking->date))])) {
+        $bookingsByDay[date('Y-m-d', strtotime($booking->date))] = array();
+    }
+    $bookingsByDay[date('Y-m-d', strtotime($booking->date))][] = $booking;
+}
+
+// Check bookings in this week (only testing, have to comment)
+/*
+foreach ($bookingsByDay as $booki) {
+    foreach ($booki as $b) {
+        echo "$b->date / ";
     }
 }
-?>
-<div class="alert alert-info" role="alert">
-    Tenir en compte que les fletxes van amb retràs, és a dir, que quan fas click a la fletxa de la dreta, no es veuen els canvis fins que no fas click a la fletxa de l'esquerra o dreta una altra vegada.
-    Per exemple: esteim a 20/04, quan fas click a la dreta, la cookie s'estableix a 24/04, però no es veuen els canvis fins que dones click una altra vegada (en aquest moment la cookie estará a 28/04 si dones a la dreta, si es a l'esquerra estará a 20/04, i així)
-</div>
-<?php
-if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
-    setcookie("dateFrom", gmdate("Y-m-d\TH:i:s\Z", time()), time() + 3600, "/");
-    setcookie("dateTo", gmdate("Y-m-d\TH:i:s\Z", strtotime('+4 day', time())), time() + 3600, "/");
-} else {
-    setcookie("dateFrom", gmdate("Y-m-d\TH:i:s\Z", time()), time() + 3600, "/");
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if ($_POST["operation"] == "up") {
-            setcookie("dateFrom", gmdate("Y-m-d\TH:i:s\Z", strtotime('+4 day', strtotime($_COOKIE["dateFrom"]))), time() + 3600, "/");
-            setcookie("dateTo", gmdate("Y-m-d\TH:i:s\Z", strtotime('+4 day', strtotime($_COOKIE["dateTo"]))), time() + 3600, "/");
+*/
 
-            /*
-            if (empty($_GET['status'])) {
-                header('/projects/tasku4dawes/index.php?page=reserves&status=1');
-            }
-            */
-        } else if ($_POST["operation"] == "down") {
-            setcookie("dateFrom", gmdate("Y-m-d\TH:i:s\Z", strtotime('-4 day', strtotime($_COOKIE["dateFrom"]))), time() + 3600, "/");
-            setcookie("dateTo", gmdate("Y-m-d\TH:i:s\Z", strtotime('-4 day', strtotime($_COOKIE["dateTo"]))), time() + 3600, "/");
-
-            /*
-            if (empty($_GET['status'])) {
-                header('/projects/tasku4dawes/index.php?page=reserves&status=1');
-            }
-            */
-        }
-    } else {
-        setcookie("dateFrom", gmdate("Y-m-d\TH:i:s\Z", time()), time() + 3600, "/");
-        setcookie("dateTo", gmdate("Y-m-d\TH:i:s\Z", strtotime('+4 day', time())), time() + 3600, "/");
-    }
-}
 ?>
+
 <div class="row">
     <div class="col-sm-8">
+        <!-- Header of table -->
         <div class="alert alert-primary" role="alert">
             <div class="row">
                 <div class="col-sm-2">
@@ -68,21 +63,7 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                         </formc>
                 </div>
                 <div class="col-sm-8">
-                    <h2> Reserves setmana <?php
-                                            $time = null;
-                                            if (isset($_COOKIE["dateFrom"])) {
-                                                $time = strtotime($_COOKIE["dateFrom"]);
-                                            }
-                                            $day = date("d", $time);
-                                            $month = date("m", $time);
-                                            echo ($day . "/" . $month) ?> a <?php
-                                                                            $timeTo = null;
-                                                                            if (isset($_COOKIE["dateTo"])) {
-                                                                                $timeTo = strtotime($_COOKIE["dateTo"]);
-                                                                            }
-                                                                            $dayTo = date("d", $timeTo);
-                                                                            $monthTo = date("m", $timeTo);
-                                                                            echo ($dayTo . "/" . $monthTo) ?></h2>
+                    <h2> Reserves setmana <?php echo $monday ?> a <?php echo $friday ?></h2>
                 </div>
                 <div class="col-sm-2">
                     <form class="form-group" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?page=reserves"; ?>">
@@ -92,261 +73,616 @@ if (!isset($_COOKIE["dateFrom"]) && !isset($_COOKIE["dateTo"])) {
                 </div>
             </div>
         </div>
-        <?php
-        $diesSetmana = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
-        $dateFrom = null;
-        $dateTo = null;
-        if (isset($_COOKIE["dateFrom"])) {
-            $dateFrom = $_COOKIE["dateFrom"];
-        }
-        if (isset($_COOKIE["dateTo"])) {
-            $dateTo = $_COOKIE["dateTo"];
-        }
-        $sql = "SELECT * FROM reserves WHERE data BETWEEN '$dateFrom' AND '$dateTo'";
-        $result = $conn->query($sql);
-        echo $result->num_rows . ' resultats.   ';
-        if ($result->num_rows > 0) {
-        ?>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover table-striped">
-                    <caption>Els dissabtes i diumenges no están disponibles.</caption>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Dilluns</th>
-                            <th>Dimarts</th>
-                            <th>Dimecres</th>
-                            <th>Dijous</th>
-                            <th>Divendres</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- FORMA INCORRECTA PERO A MIG FUNCIONAR (la forma correcta de hacerlo pero que aun no conseguí que funcione está en deprecated/ -->
-                        <?php
-                        // output data of each row
 
-                        $diesSetmana = array("1", "2", "3", "4", "5");
-                        // $horesDisponibles = ["15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
-                        // $index = 0; // per el while i anar posant els dies de la setmana
-                        // echo "<tr><td>" . $horesDisponibles[$index] . "</td><td>" . $row["data"] . "</td><td>" . $row["idpista"] . "</td><td>" . $row["idusuari"] . "</td></tr>";
-
-                        // 15:00
-                        echo "<tr>";
-                        echo "<td>15:00</td>";
-                        while ($row = $result->fetch_assoc()) {
-                            if (date('H', strtotime($row["data"])) == "15") { // Si el registro es hora 15
-                                foreach ($diesSetmana as $dia) { // Recorremos lunes a viernes
-                                    if ($dia == date('N', strtotime($row["data"]))) { // 'N' es para dias de la semana (1 = dilluns, 7 = diumenge) Si el dia es igual al dia de la semana del registro
-                                        // Dia de la semana especifico con hora especifica (registros)
-                                        echo "<td>";
-                                        $sqlField = "SELECT * FROM reserves WHERE reserves.data = '$row[data]'"; // en una fecha concreta tantas reservas
-                                        $resultField = $conn->query($sqlField);
-                                        if ($resultField->num_rows > 0) {
-                                            while ($rowField = $resultField->fetch_assoc()) {
-                                                // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
-                                                $resultDatosReserva = $conn->query($sqlDatosReserva);
-                                                if ($resultDatosReserva->num_rows > 0) {
-                                                    while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
-                                                        echo $rowDatosReserva["nom"] . " " . $rowDatosReserva["llinatges"] . ": " . $rowDatosReserva["tipo"] . " | ";
-                                                        // Si no funciona bien quitar el break
-                                                        break;
-                                                    }
-                                                }
+        <!-- TABLE -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <th></th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                </thead>
+                <tbody>
+                    <tr striped>
+                        <td>16:00</td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Monday
+                            $monday = date('Y-m-d', strtotime($monday));
+                            // echo $monday;
+                            if (isset($bookingsByDay[$monday])) {
+                                foreach ($bookingsByDay[$monday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "16") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
                                             }
                                         }
-                                        echo "</td>";
-                                    } else {
-                                        echo "<td></td>";
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
                                     }
                                 }
-                                break;
                             }
-                        }
-                        echo "</tr>";
-                        // 16:00
-                        echo "<tr>";
-                        echo "<td>16:00</td>";
-                        while ($row = $result->fetch_assoc()) {
-                            if (date('H', strtotime($row["data"])) == "16") {
-                                foreach ($diesSetmana as $dia) { // Recorremos lunes a viernes
-                                    if ($dia == date('N', strtotime($row["data"]))) { // 'N' es para dias de la semana (1 = dilluns, 7 = diumenge) Si el dia es igual al dia de la semana del registro
-                                        // Dia de la semana especifico con hora especifica (registros)
-                                        echo "<td>";
-                                        $sqlField = "SELECT * FROM reserves WHERE reserves.data = '$row[data]'"; // en una fecha concreta tantas reservas
-                                        $resultField = $conn->query($sqlField);
-                                        if ($resultField->num_rows > 0) {
-                                            while ($rowField = $resultField->fetch_assoc()) {
-                                                // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
-                                                $resultDatosReserva = $conn->query($sqlDatosReserva);
-                                                if ($resultDatosReserva->num_rows > 0) {
-                                                    while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
-                                                        echo $rowDatosReserva["nom"] . " " . $rowDatosReserva["llinatges"] . ": " . $rowDatosReserva["tipo"] . " | ";
-                                                        // Si no funciona bien quitar el break
-                                                        break;
-                                                    }
-                                                }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Tuesday
+                            $tuesday = date('Y-m-d', strtotime('+1 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$tuesday])) {
+                                foreach ($bookingsByDay[$tuesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "16") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
                                             }
                                         }
-                                        echo "</td>";
-                                    } else {
-                                        echo "<td></td>";
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
                                     }
                                 }
-                                break;
-                                break;
                             }
-                        }
-                        echo "</tr>";
-                        // 17:00
-                        echo "<tr>";
-                        echo "<td>17:00</td>";
-                        while ($row = $result->fetch_assoc()) {
-                            if (date('H', strtotime($row["data"])) == "17") {
-                                foreach ($diesSetmana as $dia) { // Recorremos lunes a viernes
-                                    if ($dia == date('N', strtotime($row["data"]))) { // 'N' es para dias de la semana (1 = dilluns, 7 = diumenge) Si el dia es igual al dia de la semana del registro
-                                        // Dia de la semana especifico con hora especifica (registros)
-                                        echo "<td>";
-                                        $sqlField = "SELECT * FROM reserves WHERE reserves.data = '$row[data]'"; // en una fecha concreta tantas reservas
-                                        $resultField = $conn->query($sqlField);
-                                        if ($resultField->num_rows > 0) {
-                                            while ($rowField = $resultField->fetch_assoc()) {
-                                                // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
-                                                $resultDatosReserva = $conn->query($sqlDatosReserva);
-                                                if ($resultDatosReserva->num_rows > 0) {
-                                                    while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
-                                                        echo $rowDatosReserva["nom"] . " " . $rowDatosReserva["llinatges"] . ": " . $rowDatosReserva["tipo"] . " | ";
-                                                        // Si no funciona bien quitar el break
-                                                        break;
-                                                    }
-                                                }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Wednesday
+                            $wednesday = date('Y-m-d', strtotime('+2 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$wednesday])) {
+                                foreach ($bookingsByDay[$wednesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "16") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
                                             }
                                         }
-                                        echo "</td>";
-                                    } else {
-                                        echo "<td></td>";
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
                                     }
                                 }
-                                break;
-                                break;
                             }
-                        }
-                        echo "</tr>";
-                        // 18:00
-                        echo "<tr>";
-                        echo "<td>18:00</td>";
-                        while ($row = $result->fetch_assoc()) {
-                            if (date('H', strtotime($row["data"])) == "18") {
-                                foreach ($diesSetmana as $dia) { // Recorremos lunes a viernes
-                                    if ($dia == date('N', strtotime($row["data"]))) { // 'N' es para dias de la semana (1 = dilluns, 7 = diumenge) Si el dia es igual al dia de la semana del registro
-                                        // Dia de la semana especifico con hora especifica (registros)
-                                        echo "<td>";
-                                        $sqlField = "SELECT * FROM reserves WHERE reserves.data = '$row[data]'"; // en una fecha concreta tantas reservas
-                                        $resultField = $conn->query($sqlField);
-                                        if ($resultField->num_rows > 0) {
-                                            while ($rowField = $resultField->fetch_assoc()) {
-                                                // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
-                                                $resultDatosReserva = $conn->query($sqlDatosReserva);
-                                                if ($resultDatosReserva->num_rows > 0) {
-                                                    while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
-                                                        echo $rowDatosReserva["nom"] . " " . $rowDatosReserva["llinatges"] . ": " . $rowDatosReserva["tipo"] . " | ";
-                                                        // Si no funciona bien quitar el break
-                                                        break;
-                                                    }
-                                                }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Thursday
+                            $thursday = date('Y-m-d', strtotime('+3 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$thursday])) {
+                                foreach ($bookingsByDay[$thursday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "16") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
                                             }
                                         }
-                                        echo "</td>";
-                                    } else {
-                                        echo "<td></td>";
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
                                     }
                                 }
-                                break;
-                                break;
                             }
-                        }
-                        echo "</tr>";
-                        // 19:00
-                        echo "<tr>";
-                        echo "<td>19:00</td>";
-                        while ($row = $result->fetch_assoc()) {
-                            if (date('H', strtotime($row["data"])) == "19") {
-                                foreach ($diesSetmana as $dia) { // Recorremos lunes a viernes
-                                    if ($dia == date('N', strtotime($row["data"]))) { // 'N' es para dias de la semana (1 = dilluns, 7 = diumenge) Si el dia es igual al dia de la semana del registro
-                                        // Dia de la semana especifico con hora especifica (registros)
-                                        echo "<td>";
-                                        $sqlField = "SELECT * FROM reserves WHERE reserves.data = '$row[data]'"; // en una fecha concreta tantas reservas
-                                        $resultField = $conn->query($sqlField);
-                                        if ($resultField->num_rows > 0) {
-                                            while ($rowField = $resultField->fetch_assoc()) {
-                                                // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
-                                                $resultDatosReserva = $conn->query($sqlDatosReserva);
-                                                if ($resultDatosReserva->num_rows > 0) {
-                                                    while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
-                                                        echo $rowDatosReserva["nom"] . " " . $rowDatosReserva["llinatges"] . ": " . $rowDatosReserva["tipo"] . " | ";
-                                                        // Si no funciona bien quitar el break
-                                                        break;
-                                                    }
-                                                }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Friday
+                            $friday = date('Y-m-d', strtotime('+4 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$friday])) {
+                                foreach ($bookingsByDay[$friday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "16") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
                                             }
                                         }
-                                        echo "</td>";
-                                    } else {
-                                        echo "<td></td>";
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
                                     }
                                 }
-                                break;
-                                break;
                             }
-                        }
-                        echo "</tr>";
-                        // 20:00
-                        echo "<tr>";
-                        echo "<td>20:00</td>";
-                        while ($row = $result->fetch_assoc()) {
-                            if (date('H', strtotime($row["data"])) == "20") {
-                                foreach ($diesSetmana as $dia) { // Recorremos lunes a viernes
-                                    if ($dia == date('N', strtotime($row["data"]))) { // 'N' es para dias de la semana (1 = dilluns, 7 = diumenge) Si el dia es igual al dia de la semana del registro
-                                        // Dia de la semana especifico con hora especifica (registros)
-                                        echo "<td>";
-                                        $sqlField = "SELECT * FROM reserves WHERE reserves.data = '$row[data]'"; // en una fecha concreta tantas reservas
-                                        $resultField = $conn->query($sqlField);
-                                        if ($resultField->num_rows > 0) {
-                                            while ($rowField = $resultField->fetch_assoc()) {
-                                                // obtener los datos de cada reserva
-                                                $sqlDatosReserva = "SELECT pistes.tipo, usuaris.nom, usuaris.llinatges FROM reserves INNER JOIN pistes ON pistes.idpista = '$rowField[idpista]' INNER JOIN usuaris ON usuaris.idusuari = '$rowField[idusuari]' WHERE reserves.data = '$rowField[data]'";
-                                                $resultDatosReserva = $conn->query($sqlDatosReserva);
-                                                if ($resultDatosReserva->num_rows > 0) {
-                                                    while ($rowDatosReserva = $resultDatosReserva->fetch_assoc()) {
-                                                        echo $rowDatosReserva["nom"] . " " . $rowDatosReserva["llinatges"] . ": " . $rowDatosReserva["tipo"] . " | ";
-                                                        // Si no funciona bien quitar el break
-                                                        break;
-                                                    }
-                                                }
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>17:00</td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Monday
+                            $monday = date('Y-m-d', strtotime($monday));
+                            // echo $monday;
+                            if (isset($bookingsByDay[$monday])) {
+                                foreach ($bookingsByDay[$monday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "17") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
                                             }
                                         }
-                                        echo "</td>";
-                                    } else {
-                                        echo "<td></td>";
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
                                     }
                                 }
-                                break;
-                                break;
                             }
-                        }
-                        echo "</tr>";
-                        ?>
-                        <!-- END FORMA INCORRECTA PERO A MIG FUNCIONAR -->
-                    </tbody>
-                </table>
-            </div>
-        <?php
-        }
-        $result->free();
-        ?>
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Tuesday
+                            $tuesday = date('Y-m-d', strtotime('+1 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$tuesday])) {
+                                foreach ($bookingsByDay[$tuesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "17") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Wednesday
+                            $wednesday = date('Y-m-d', strtotime('+2 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$wednesday])) {
+                                foreach ($bookingsByDay[$wednesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "17") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Thursday
+                            $thursday = date('Y-m-d', strtotime('+3 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$thursday])) {
+                                foreach ($bookingsByDay[$thursday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "17") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Friday
+                            $friday = date('Y-m-d', strtotime('+4 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$friday])) {
+                                foreach ($bookingsByDay[$friday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "17") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>18:00</td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Monday
+                            $monday = date('Y-m-d', strtotime($monday));
+                            // echo $monday;
+                            if (isset($bookingsByDay[$monday])) {
+                                foreach ($bookingsByDay[$monday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "18") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Tuesday
+                            $tuesday = date('Y-m-d', strtotime('+1 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$tuesday])) {
+                                foreach ($bookingsByDay[$tuesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "18") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Wednesday
+                            $wednesday = date('Y-m-d', strtotime('+2 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$wednesday])) {
+                                foreach ($bookingsByDay[$wednesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "18") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Thursday
+                            $thursday = date('Y-m-d', strtotime('+3 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$thursday])) {
+                                foreach ($bookingsByDay[$thursday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "18") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Friday
+                            $friday = date('Y-m-d', strtotime('+4 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$friday])) {
+                                foreach ($bookingsByDay[$friday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "18") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>19:00</td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Monday
+                            $monday = date('Y-m-d', strtotime($monday));
+                            // echo $monday;
+                            if (isset($bookingsByDay[$monday])) {
+                                foreach ($bookingsByDay[$monday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "19") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Tuesday
+                            $tuesday = date('Y-m-d', strtotime('+1 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$tuesday])) {
+                                foreach ($bookingsByDay[$tuesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "19") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Wednesday
+                            $wednesday = date('Y-m-d', strtotime('+2 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$wednesday])) {
+                                foreach ($bookingsByDay[$wednesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "19") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Thursday
+                            $thursday = date('Y-m-d', strtotime('+3 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$thursday])) {
+                                foreach ($bookingsByDay[$thursday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "19") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Friday
+                            $friday = date('Y-m-d', strtotime('+4 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$friday])) {
+                                foreach ($bookingsByDay[$friday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "19") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>20:00</td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Monday
+                            $monday = date('Y-m-d', strtotime($monday));
+                            // echo $monday;
+                            if (isset($bookingsByDay[$monday])) {
+                                foreach ($bookingsByDay[$monday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "20") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Tuesday
+                            $tuesday = date('Y-m-d', strtotime('+1 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$tuesday])) {
+                                foreach ($bookingsByDay[$tuesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "20") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Wednesday
+                            $wednesday = date('Y-m-d', strtotime('+2 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$wednesday])) {
+                                foreach ($bookingsByDay[$wednesday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "20") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Thursday
+                            $thursday = date('Y-m-d', strtotime('+3 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$thursday])) {
+                                foreach ($bookingsByDay[$thursday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "20") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            // Display the track name for each booking on Friday
+                            $friday = date('Y-m-d', strtotime('+4 day', strtotime($monday)));
+                            if (isset($bookingsByDay[$friday])) {
+                                foreach ($bookingsByDay[$friday] as $booking) {
+                                    if (date('H', strtotime($booking->date)) == "20") {
+                                        $nomPista = "";
+                                        foreach ($pistes as $key => $value) {
+                                            if ($booking->id_pista == $key) {
+                                                $nomPista = $value;
+                                            }
+                                        }
+                                        if ($id_usuario == $booking->id_client) {
+                                            echo "<strong style='color:red'>" . $nomPista . "</strong><br>";
+                                        } else {
+                                            echo "<p>" . $nomPista . "</p><br>";
+                                        }
+                                    }
+                                }
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

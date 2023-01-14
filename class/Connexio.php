@@ -13,9 +13,9 @@ class Connexio
     function __construct()
     {
         $this->host = "localhost";
-        $this->db = "gimnaspoo";
         $this->user = "root";
         $this->password = "";
+        $this->db = "gimnaspoo";
         $this->connection = $this->createConnection();
     }
 

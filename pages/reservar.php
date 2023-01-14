@@ -4,13 +4,51 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: /projects/tasku4dawes/index.php?page=login');
 }
 
-// VALIDATION
-$diaErr = $horaErr = $tipusErr = $usuariErr = "";
-$dia = $hora = "";
-$tipus = $usuari = 0;
-$validForm = true;
-$validFormVacios = true;
+require_once(__DIR__ . '/../class/Reserva.php');
 
+// VALIDATION
+$reserva = new Reserva();
+$diaErr = $horaErr = $tipusErr = $dia = $hora = "";
+$tipus = $usuari_id = 0;
+$validForm = $validFormVacios = true;
+$diesSetmana = array("1", "2", "3", "4", "5");
+
+// Sanitize input
+function test_input($data)
+{
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+function join_date_and_time($date, $time)
+{
+    $only_date = date('Y-m-d', strtotime($date));
+    $only_time = date('H:i:s', strtotime($time));
+    $full_date = date('Y-m-d H:i:s', strtotime("$only_date $only_time"));
+    return $full_date;
+}
+
+// Mensajes de la web
+if (isset($_SESSION['message']) && $_SESSION['message'] != "") {
+    if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "success") {
+?>
+        <div class="alert alert-success" role="alert">
+            <?= $_SESSION['message'] ?>
+        </div>
+    <?php
+    } else if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "error") {
+    ?>
+        <div class="alert alert-danger" role="alert">
+            <?= $_SESSION['message'] ?>
+        </div>
+<?php
+        $_SESSION['message'] = "";
+    }
+}
+
+// Formulario enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check si estan vacios
     if (empty($_POST["dia"])) {
@@ -34,90 +72,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tipus = test_input($_POST["tipus"]);
     }
 
-    if (empty($_POST["usuari"])) {
-        $usuariErr = "Usuari no valid";
+    if (empty($_POST["usuariid"])) {
         $validFormVacios = false;
     } else {
-        $usuari = test_input($_POST["usuari"]);
+        $usuari_id = test_input($_POST["usuariid"]);
     }
 
-    // Check si ya existe
-    $dataCompleta = join_date_and_time($_POST["dia"], $_POST["hora"]);
-    $sql = "SELECT * FROM reserves";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-        while ($valores = $result->fetch_assoc()) {
-            if (($valores["idpista"] == $_POST["tipus"]) && ($valores["data"] == $dataCompleta)) {
-                $validForm = false;
+    if (isset($_POST['reservar'])) {
+        $dataCompleta = join_date_and_time($_POST["dia"], $_POST["hora"]);
+        if ($validFormVacios && !$reserva->checkSiExisteReserva($dataCompleta, $tipus)) {
+            if ($reserva->afegirReserva(new ReservaSingleInstance($dataCompleta, $tipus, $usuari_id))) {
+                $_SESSION['message'] = 'Reserva created successfully';
+                $_SESSION['message_type'] = 'success';
+            } else {
+                echo " Crear reserva failed ";
                 $_SESSION['message'] = 'Reserva creation failed';
                 $_SESSION['message_type'] = 'error';
-                break;
             }
         }
     }
-    $result->free();
-    if ($validForm && $validFormVacios) {
-        // prepare and bind
-        try {
-            $stmt = $conn->prepare("INSERT INTO reserves (data, idpista, idusuari) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $dataCompleta, $tipus, $usuari);
-            $stmt->execute();
-            $_SESSION['message'] = 'Reserva created successfully';
-            $_SESSION['message_type'] = 'success';
-        } catch (Exception $e) {
-            echo "crear reserva failed";
-            $_SESSION['message'] = 'Reserva creation failed';
-            $_SESSION['message_type'] = 'error';
-        } finally {
-            $stmt->close();
-        }
-    }
-}
-
-// Sanitize input
-function test_input($data)
-{
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
-
-function join_date_and_time($date, $time)
-{
-    $only_date = date('Y-m-d', strtotime($date));
-    $only_time = date('H:i:s', strtotime($time));
-    $full_date = date('Y-m-d H:i:s', strtotime("$only_date $only_time"));
-    return $full_date;
 }
 
 ?>
 <!-- Page -->
 <div class="row">
     <div class="col-sm-4">
-        <?php
-        // Mensajes de la web
-        if (isset($_SESSION['message']) && $_SESSION['message'] != "") {
-            if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "success") {
-        ?>
-                <div class="alert alert-success" role="alert">
-                    <?= $_SESSION['message'] ?>
-                </div>
-            <?php
-            } else if (isset($_SESSION['message_type']) && $_SESSION['message_type'] == "error") {
-            ?>
-                <div class="alert alert-danger" role="alert">
-                    <?= $_SESSION['message'] ?>
-                </div>
-        <?php
-                $_SESSION['message'] = "";
-            }
-        }
-        ?>
         <div class="alert alert-info" role="alert">
             Tenir en compte que no es pot reservar els dissabtes y diumenges.
         </div>
-        <form class="form-group" name="reserva" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <form class="form-group" name="reservar" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>?page=reservar">
             <h2> Reserva pista</h2>
             <p>
                 <label for="dia">Dia:</label>
@@ -151,15 +134,16 @@ function join_date_and_time($date, $time)
                 <span class="error">* <?php echo $tipusErr; ?></span>
             </p>
 
-            <input type="hidden" name="usuari" value="<?php
+            <input type="hidden" name="usuariid" value="<?php
                                                         $user = explode("/", $_SESSION['usuario']);
                                                         echo $user[0];
                                                         ?>">
 
             <div style="text-align: center">
-                <input class="btn btn-primary" type="submit" value="Enviar" name="enviar" style="margin-right: 5px; width: 60px; height:30px; font-weight: bold">
+                <input class="btn btn-primary" type="submit" value="reservar" name="reservar" style="margin-right: 5px; width: 60px; height:30px; font-weight: bold">
             </div>
         </form>
+
         <?php
         if (!$validForm) {
         ?>

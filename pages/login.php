@@ -29,7 +29,7 @@ function loginHTML($username, $password, $usernameErr, $passErr)
     <div class="col-sm-4">
         <form class="form-group" name="login" method="POST" action="';
     echo htmlspecialchars($_SERVER["PHP_SELF"]);
-    echo '">
+    echo '?page=login">
             <caption><strong>Iniciar Sesión</strong></caption>
             <p>
                 <label for="username">Nom de usuari:</label>
