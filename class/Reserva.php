@@ -51,7 +51,7 @@ class Reserva extends Connexio
 
     function reservesPerUsuari($iduser)
     {
-        $sql = "select * from reserves where idusuari = $iduser";
+        $sql = "select * from reserves where idusuari = $iduser order by data asc";
         $resultat = $this->query($sql);
         $all_reserves = array();
         while ($fila = $resultat->fetch_assoc()) {

@@ -7,6 +7,7 @@ if (!isset($_SESSION['usuario'])) {
 require_once(__DIR__ . '../../class/Reserva.php');
 require_once(__DIR__ . '../../class/ReservaSingleInstance.php');
 require_once(__DIR__ . '../../class/Pista.php');
+require_once(__DIR__ . '../../util/functions.php');
 
 $res = new Reserva();
 $pista = new Pista();
@@ -26,14 +27,14 @@ $reservasUsuario = $res->reservesPerUsuari($id_usuario);
 // Testing (COMMENT)
 /*
 foreach ($reservasUsuario as $reserva){
-    echo $reserva->date . "/";
+    echo $reserva->date . " / ";
 }
 */
 
 // Calculate the date of Monday for the current week
-$monday = date('Y-m-d', strtotime('monday this week'));
+$monday = date('Y-m-d', strtotime(getStartOfWeekDate($reservasUsuario[0]->date)));
 // Calculate the date of Friday for the current week
-$friday = date('Y-m-d', strtotime('friday this week'));
+$friday = date('Y-m-d', strtotime(getEndOfWeekDate($reservasUsuario[0]->date)));
 
 // Retrieve the bookings for this week
 $bookings = $res->llistaReserves($monday, $friday);
@@ -65,21 +66,25 @@ foreach ($bookingsByDay as $booki) {
         <!-- Header of table -->
         <div class="alert alert-primary" role="alert">
             <div class="row">
+                <!--
                 <div class="col-sm-2">
                     <form class="form-group" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?page=reserves"; ?>">
                         <input type="hidden" name="operation" value="down">
                         <button type="submit"><img src="./static/left.png" style="cursor:pointer"></button>
                         </formc>
                 </div>
+                -->
                 <div class="col-sm-8">
                     <h2> Reserves setmana <?php echo $monday ?> a <?php echo $friday ?></h2>
                 </div>
+                <!--
                 <div class="col-sm-2">
                     <form class="form-group" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "?page=reserves"; ?>">
                         <input type="hidden" name="operation" value="up">
                         <button type="submit"><img src="./static/right.png" style="cursor:pointer"></button>
                     </form>
                 </div>
+                -->
             </div>
         </div>
 
