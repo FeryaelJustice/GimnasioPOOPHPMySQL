@@ -1,7 +1,7 @@
 <?php
 // Redirect if it's not logged
 if (!isset($_SESSION['usuario'])) {
-    header('Location: /projects/tasku4dawes/index.php?page=login');
+    header('Location: ./index.php?page=login');
 }
 
 require_once(__DIR__ . '/../class/Reserva.php');

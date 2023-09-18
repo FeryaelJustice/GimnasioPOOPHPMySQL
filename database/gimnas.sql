@@ -3,8 +3,6 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-DROP DATABASE if EXISTS gimnaspoo;
-CREATE DATABASE gimnaspoo;
 USE gimnaspoo;
 
 CREATE TABLE `usuaris` (

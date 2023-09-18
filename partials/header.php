@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         unset($_SESSION['usuario']);
         $_SESSION['message'] = 'User signed out successfully';
         $_SESSION['message_type'] = 'success';
-        header('Location: /projects/tasku4dawes/index.php?page=login');
+        header('Location: ./index.php?page=login');
     }
 }
 ?>
@@ -47,15 +47,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- NAVEGACIÓ -->
     <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/projects/tasku4dawes/index.php?page=login"><strong>Gimnàs</strong></a>
+            <a class="navbar-brand" href="./index.php?page=login"><strong>Gimnàs</strong></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <!-- <a class="nav-link disabled">Home</a> -->
-                    <a class="nav-link<?php echo ($page == "reservar" ? " active\" aria-current=\"page" : "") ?>" href="/projects/tasku4dawes/index.php?page=reservar">Reservar pista</a>
-                    <a class="nav-link<?php echo ($page == "reserves" ? " active\" aria-current=\"page" : "") ?>" href="/projects/tasku4dawes/index.php?page=reserves">Veure reserves</a>
+                    <a class="nav-link<?php echo ($page == "reservar" ? " active\" aria-current=\"page" : "") ?>" href="./index.php?page=reservar">Reservar pista</a>
+                    <a class="nav-link<?php echo ($page == "reserves" ? " active\" aria-current=\"page" : "") ?>" href="./index.php?page=reserves">Veure reserves</a>
                     <?php
                     // <a class="nav-link" href="/login.php?page=login">Sign out</a>
                     if (isset($_SESSION['usuario'])) {

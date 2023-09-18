@@ -1,7 +1,7 @@
 <?php
 // Redirect if it's not logged
 if (!isset($_SESSION['usuario'])) {
-    header('Location: /projects/tasku4dawes/index.php?page=login');
+    header('Location: ./index.php?page=login');
 }
 
 require_once(__DIR__ . '../../class/Reserva.php');
@@ -32,9 +32,17 @@ foreach ($reservasUsuario as $reserva){
 */
 
 // Calculate the date of Monday for the current week
-$monday = date('Y-m-d', strtotime(getStartOfWeekDate($reservasUsuario[0]->date)));
+if($reservasUsuario){
+    $monday = date('Y-m-d', strtotime(getStartOfWeekDate($reservasUsuario[0]->date)));
+} else {
+    $monday = date('Y-m-d', strtotime(getStartOfWeekDate(date("Y-m-d"))->format('Y-m-d')));
+}
 // Calculate the date of Friday for the current week
-$friday = date('Y-m-d', strtotime(getEndOfWeekDate($reservasUsuario[0]->date)));
+if($reservasUsuario){
+    $friday = date('Y-m-d', strtotime(getEndOfWeekDate($reservasUsuario[0]->date)));
+} else {
+    $friday = date('Y-m-d', strtotime(getEndOfWeekDate(date("Y-m-d"))->format('Y-m-d')));
+}
 
 // Retrieve the bookings for this week
 $bookings = $res->llistaReserves($monday, $friday);

@@ -24,7 +24,7 @@ if (isset($_SESSION['message']) && $_SESSION['message'] != "") {
 
 // Redirect if it's logged
 if (isset($_SESSION['usuario'])) {
-    header('Location: /projects/tasku4dawes/index.php?page=reservar');
+    header('Location: ./index.php?page=reservar');
 }
 
 // Register
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['message'] = 'User created successfully';
                 $_SESSION['message_type'] = 'success';
                 echo "User creation successful";
-                header('Location: /projects/tasku4dawes/index.php?page=login');
+                header('Location: ./index.php?page=login');
             } else {
                 $_SESSION['message'] = 'User creation failed';
                 $_SESSION['message_type'] = 'error';
@@ -93,6 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input class="btn btn-primary" type="submit" value="Registrarse" name="signup" style="margin-right: 5px; width: 60px; height:30px; font-weight: bold">
             </div>
         </form>
-        <a href="/projects/tasku4dawes/index.php?page=login"><strong>Volver.</strong></a>
+        <a href="./index.php?page=login"><strong>Volver.</strong></a>
     </div>
 </div>

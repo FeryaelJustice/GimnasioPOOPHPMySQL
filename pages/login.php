@@ -53,7 +53,7 @@ function loginHTML($username, $password, $usernameErr, $passErr)
                 <input class="btn btn-primary" type="submit" value="Iniciar sesión" name="signin" style="margin-right: 5px; width: 60px; height:30px; font-weight: bold">
             </div>
         </form>
-        <a href="/projects/tasku4dawes/index.php?page=register"><strong>¿Aún no tienes una cuenta? Haz click aquí para registrarte.</strong></a>
+        <a href="./index.php?page=register"><strong>¿Aún no tienes una cuenta? Haz click aquí para registrarte.</strong></a>
     </div>
 </div>';
 }
@@ -61,7 +61,7 @@ function loginHTML($username, $password, $usernameErr, $passErr)
 // Pagina
 // Autologin
 if (isset($_SESSION['usuario'])) {
-    header('Location: /projects/tasku4dawes/index.php?page=reservar');
+    header('Location: ./index.php?page=reservar');
 } else {
     loginHTML($username, $password, $usernameErr, $passErr);
 }
@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['message'] = 'User logged successfully';
             $_SESSION['message_type'] = 'success';
             echo "User logged";
-            header('Location: /projects/tasku4dawes/index.php?page=reservar');
+            header('Location: ./index.php?page=reservar');
         } else {
             $_SESSION['message'] = 'User not logged successfully. User not found.';
             $_SESSION['message_type'] = 'error';
